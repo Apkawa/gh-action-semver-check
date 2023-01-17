@@ -1,0 +1,12 @@
+poetry-core==1.4.0
+
+# pip freeze -r requirements-dev.txt
+wheel==0.37.1
+tox==4.3.3
+twine==4.0.2
+# Tests
+pytest==7.2.1
+pytest-cov==4.0.0
+# QA
+pre-commit==2.21.0
+commitizen==1.0.0

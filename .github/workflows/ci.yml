@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    types: [ opened, synchronize, reopened ]  # Same as default
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    name: "python ${{ matrix.python-version }} ${{ matrix.toxenv }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ 3.8 ]
+        toxenv: [ "" ]
+        experimental: [ false ]
+
+        include:
+          - toxenv: flake8
+            python-version: 3.8
+            experimental: false
+
+          - toxenv: mypy
+            python-version: 3.8
+            experimental: false
+
+          - toxenv: pylint
+            python-version: 3.8
+            experimental: false
+
+    continue-on-error: ${{ matrix.experimental }}
+    env:
+      TOXENV: ${{ matrix.toxenv }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python ${{ matrix.python-version}}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox tox-gh-actions codecov
+      - name: Run tests
+        run: tox
+      - uses: codecov/codecov-action@v1
+        with:
+          env_vars: OS,PYTHON,TOXENV
+
+  test_action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Test this action
+        uses: ./
+        id: version
+        with:
+          prefix: v
+
+      - name: valid version only step
+        run: |
+          echo "Found valid version format in tag!"
+          echo "Full version: ${{ steps.version.outputs.full }}"
+          echo "Major version: ${{ steps.version.outputs.major }}"
+        if: steps.version.outputs.is_valid == 'true'
+
+      - name: Stable version only step
+        run: |
+          echo "Found stable version in tag!"
+        if: steps.version.outputs.is_stable == 'true'
