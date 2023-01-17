@@ -1,0 +1,51 @@
+# Make sure to change the action name here (must be unique).
+# Update the rest as needed.
+name: 'action-semver-check'
+description: 'Github Action for check PEP0440 via poetry-semver'
+
+branding: # Look at documentation for branding options/requirements. These are my favorites.
+  icon: 'book-open'
+  color: 'green'
+
+inputs:
+  prefix:
+    description: 'Version prefix in tag. `refs/tags/` is unnecessary.'
+    required: false
+    default: ''
+
+outputs:
+  is_valid:
+    description: '`true` if found valid version format in tag.'
+  is_stable:
+    description: '`true` if found stable version in tag. (not have pre-release metadata and major > 0)'
+  is_prerelease:
+    description: '`true` if found pre-release version in tag.'
+  full:
+    description: 'Set full version as a string (include prefix).'
+  full_without_prefix:
+    description: 'Set full version as a string (exclude prefix).'
+  major:
+    description: 'Set major version as a string (include prefix).'
+  major_without_prefix:
+    description: 'Set major version as a string (exclude prefix).'
+  minor:
+    description: 'Set minor version as a string.'
+  patch:
+    description: 'Set patch version as a string.'
+  rest:
+    description: 'Set rest version as a string.'
+  build:
+    description: 'Set build version.'
+  prerelease:
+    description: 'Set pre-release version as a string.'
+  prerelease_type:
+    description: 'Set pre-release type as a string. Example: alpha, beta, rc'
+  prerelease_number:
+    description: 'Set pre-release version as a string. Example: 1'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.input-one }}
+    - ${{ inputs.input-two }}
