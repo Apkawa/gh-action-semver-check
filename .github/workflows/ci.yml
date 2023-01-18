@@ -78,3 +78,22 @@ jobs:
       - name: fail if not valid
         run: exit 1
         if: steps.version.outputs.is_valid != 'true'
+
+  test_action_custom:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: apkawa/gh-action-semver-check@master
+        id: version
+        with:
+          raw: "v1.2.3a1"
+          prefix: ""
+
+      - name: print output step
+        run: |
+          echo "Print version"
+          echo "${{toJSON(steps.version.outputs)}}"
+
+      - name: fail if not valid
+        run: exit 1
+        if: steps.version.outputs.is_valid != 'true'
