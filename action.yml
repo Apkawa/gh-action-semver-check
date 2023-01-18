@@ -11,15 +11,15 @@ inputs:
   raw:
     description: 'Version raw string. If not set - use `GITHUB_REF` env'
     required: false
-    default: null
+    default: 'null'
   prefix:
     description: 'Prefix before version. `refs/tags/` by default'
     required: false
-    default: null
+    default: 'null'
   version_prefix:
     description: 'Version prefix in tag. `refs/tags/` is unnecessary. If not set - try detect "v" prefix'
     required: false
-    default: null
+    default: 'null'
 
 outputs:
   is_valid:
@@ -65,6 +65,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - raw=${{ inputs.raw||null }}
-    - prefix=${{ inputs.prefix||null }}
-    - version_prefix=${{ inputs.version_prefix||null }}
+    - raw=${{ inputs.raw }}
+    - prefix=${{ inputs.prefix }}
+    - version_prefix=${{ inputs.version_prefix }}
