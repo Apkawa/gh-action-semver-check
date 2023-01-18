@@ -69,7 +69,6 @@ jobs:
         with:
           # Simulate pass GITHUB_REF value
           raw: "refs/tags/v1.2.3a1"
-          prefix: v
 
       - name: print output step
         run: |
