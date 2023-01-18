@@ -65,6 +65,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - raw=${{ inputs.raw }}
-    - prefix=${{ inputs.prefix }}
-    - version_prefix=${{ inputs.version_prefix }}
+    - raw=${{ inputs.raw||null }}
+    - prefix=${{ inputs.prefix||null }}
+    - version_prefix=${{ inputs.version_prefix||null }}

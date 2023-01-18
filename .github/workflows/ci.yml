@@ -74,7 +74,7 @@ jobs:
       - name: print output step
         run: |
           echo "Print version"
-          echo "${{join(steps.version.outputs.*, '\n')}}"
+          echo "${{toJSON(steps.version.outputs)}}"
 
       - name: fail if not valid
         run: exit 1
