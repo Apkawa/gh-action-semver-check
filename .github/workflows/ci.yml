@@ -77,7 +77,11 @@ jobs:
 
       - name: fail if not valid
         run: exit 1
-        if: steps.version.outputs.is_valid != 'true'
+        if: steps.version.outputs.is_valid
+
+      - name: fail if stable
+        run: exit 1
+        if: ! steps.version.outputs.is_stable
 
   test_action_custom:
     runs-on: ubuntu-latest
