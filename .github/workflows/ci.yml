@@ -77,7 +77,7 @@ jobs:
 
       - name: fail if not valid
         run: exit 1
-        if: steps.version.outputs.is_valid
+        if: ${{ !steps.version.outputs.is_valid }}
 
       - name: fail if stable
         run: exit 1
