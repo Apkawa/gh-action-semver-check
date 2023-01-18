@@ -67,16 +67,15 @@ jobs:
         uses: ./
         id: version
         with:
+          # Simulate pass GITHUB_REF value
+          raw: "refs/tags/v1.2.3a1"
           prefix: v
 
-      - name: valid version only step
+      - name: print output step
         run: |
-          echo "Found valid version format in tag!"
-          echo "Full version: ${{ steps.version.outputs.full }}"
-          echo "Major version: ${{ steps.version.outputs.major }}"
-        if: steps.version.outputs.is_valid == 'true'
+          echo "Print version"
+          echo "${{join(steps.version.outputs.*, '\n')}}"
 
-      - name: Stable version only step
-        run: |
-          echo "Found stable version in tag!"
-        if: steps.version.outputs.is_stable == 'true'
+      - name: fail if not valid
+        run: exit 1
+        if: steps.version.outputs.is_valid != 'true'

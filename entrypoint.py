@@ -17,6 +17,8 @@ def parse_argv(argv: List[str]) -> Dict:
     {'a': 1, 'b': 'foobar', 'c': '   fooo bar   '}
     >>> parse_argv(['a  =  1', 'b  =  foobar', "c =   'baz'"])
     {'a': 1, 'b': 'foobar', 'c': 'baz'}
+    >>> parse_argv(['a  =  true', 'b  =  null', "c =   'null'", 'd='])
+    {'a': True, 'b': None, 'c': 'null', 'd': ''}
 
     :param argv:
     :return:
@@ -110,9 +112,15 @@ def parse_version(version_string: Optional[str], prefix: Optional[str] = None) -
 REF_REGEXP = re.compile("^refs/tags/(.*)$")
 
 
-def get_version_tag_from_github_env() -> Optional[str]:
+def get_version_tag_from_github_env(
+    raw: Optional[str] = None, prefix: Optional[str] = None
+) -> Optional[str]:
     """
     >>> get_version_tag_from_github_env()
+    >>> get_version_tag_from_github_env('refs/tags/v1.2.3')
+    'v1.2.3'
+    >>> get_version_tag_from_github_env('foobar/v1.2.3', 'foobar/')
+    'v1.2.3'
     >>> os.environ['GITHUB_REF'] = 'refs/tags/v1.2.3'
     >>> get_version_tag_from_github_env()
     'v1.2.3'
@@ -121,10 +129,13 @@ def get_version_tag_from_github_env() -> Optional[str]:
 
     :return:
     """
-    ref = os.environ.get("GITHUB_REF") or ""
-    m = REF_REGEXP.match(ref)
-    if m:
-        return m.groups()[0]
+    if prefix is None:
+        prefix = "refs/tags/"
+    if raw is None:
+        raw = os.environ.get("GITHUB_REF") or ""
+    if raw.startswith(prefix):
+        prefix_len = len(prefix)
+        return raw[prefix_len:]
     return None
 
 
@@ -153,9 +164,12 @@ def write_output(output: Dict, _file: TextIO) -> None:
 
 def main() -> None:
     args = parse_argv(sys.argv[1:])
-    version = get_version_tag_from_github_env()
+    version_raw = args.get("raw") or None
+    prefix = args.get("prefix")
+    version_prefix = args.get("verson_prefix")
+    version = get_version_tag_from_github_env(raw=version_raw, prefix=prefix)
 
-    output = parse_version(version, prefix=args.get("prefix"))
+    output = parse_version(version, prefix=version_prefix)
 
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf8") as f:

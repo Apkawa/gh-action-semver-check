@@ -8,9 +8,18 @@ branding: # Look at documentation for branding options/requirements. These are m
   color: 'green'
 
 inputs:
+  raw:
+    description: 'Version raw string. If not set - use `GITHUB_REF` env'
+    required: false
+    default: null
   prefix:
+    description: 'Prefix before version. `refs/tags/` by default'
+    required: false
+    default: null
+  version_prefix:
     description: 'Version prefix in tag. `refs/tags/` is unnecessary. If not set - try detect "v" prefix'
     required: false
+    default: null
 
 outputs:
   is_valid:
@@ -28,32 +37,34 @@ outputs:
   full:
     description: 'Set full version as a string.'
   full_with_prefix:
-    description: 'Set full version as a string (include prefix).'
+    description: 'Set full version as a string (include version_prefix).'
   epoch:
     description: 'Set epoch version as a string.'
   major:
     description: 'Set major version as a string.'
   major_with_prefix:
-    description: 'Set major version as a string (include prefix).'
+    description: 'Set major version as a string (include `version_prefix`).'
   minor:
     description: 'Set minor version as a string.'
   patch:
     description: 'Set patch version as a string.'
   local:
-    description: 'Set local version. '
+    description: 'Set local version.'
   prerelease:
-    description: 'Set pre-release version as a string.'
+    description: 'Set pre-release version as a string. Example: a1, b2, rc3'
   prerelease_phase:
-    description: 'Set pre-release type as a string. Example: alpha, beta, rc'
+    description: 'Set pre-release type as a string. Example: a, b, rc'
   prerelease_number:
-    description: 'Set pre-release version as a string. Example: 1'
+    description: 'Set pre-release version number as a string. Example: 1'
   dev:
     description: 'Set dev version as a string. Example: 1'
   post:
-    description: 'Set dev version as a string. Example: 1'
+    description: 'Set post version as a string. Example: 1'
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - raw=${{ inputs.raw }}
     - prefix=${{ inputs.prefix }}
+    - version_prefix=${{ inputs.version_prefix }}
